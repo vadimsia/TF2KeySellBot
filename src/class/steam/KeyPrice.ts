@@ -3,6 +3,7 @@ export class KeyPrice {
     private static instance: KeyPrice
 
     private sell_price: number
+    private buy_price: number
     private static getInstance() : KeyPrice {
         if (!this.instance)
             this.instance = new KeyPrice()
@@ -23,8 +24,7 @@ export class KeyPrice {
     }
 
     public static getBuyPrice() : number {
-        let buy_price = this.getInstance().sell_price * 0.95
-        return this.prettify(buy_price)
+        return this.getInstance().buy_price
     }
 
     public static calcSellPrice(amount: number) : number {
@@ -38,7 +38,8 @@ export class KeyPrice {
     }
 
     constructor() {
-        this.sell_price = 1.95
+        this.sell_price = parseInt(process.env.SELL_PRICE) || 1.90
+        this.buy_price = parseInt(process.env.BUY_PRICE) || 1.75
     }
 
 }
