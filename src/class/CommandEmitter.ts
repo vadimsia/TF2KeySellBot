@@ -2,7 +2,7 @@ import {TypedEmitter} from "tiny-typed-emitter";
 import {CommandProcessor} from "../interface/CommandProcessor";
 import {Command} from "./Command";
 import { UnknownCommandException, UnknownCommandProcessorException } from "../exceptions/Command";
-import {Steam} from "./Steam";
+import {Steam} from "./steam/Steam";
 import { Logger } from "@nestjs/common";
 import { Argument } from "./Argument";
 

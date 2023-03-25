@@ -1,9 +1,9 @@
-import { App } from "../enum/App";
+import { App } from "../../enum/App";
 import * as request from "request-promise";
-import { SteamInventoryException } from "../exceptions/Steam";
-import { Item } from "./Item";
-import { SteamAPIProvider } from "../interface/SteamAPIProvider";
-import { SteamInventory } from "../interface/SteamInventory";
+import { SteamInventoryException } from "../../exceptions/Steam";
+import { Item } from "../Item";
+import { SteamAPIProvider } from "../../interface/SteamAPIProvider";
+import { SteamInventory } from "../../interface/SteamInventory";
 
 
 export class SteamApis implements SteamAPIProvider {
@@ -27,6 +27,9 @@ export class SteamApis implements SteamAPIProvider {
     }
 
     getItemFromInventory(inventory: SteamInventory, classid: string) : Item[] {
+        if (inventory.total_inventory_count == 0)
+            return []
+
         return inventory.assets.map(asset => {
             if (asset.classid == classid)
                 return new Item(asset.assetid, App.TF2)

@@ -1,5 +1,5 @@
 import { TradeOffer } from "../../../interface/TradeOffer";
-import { Steam } from "../../../class/Steam";
+import { Steam } from "../../../class/steam/Steam";
 import { Logger } from "@nestjs/common";
 import { ETradeOfferState } from "steam-user";
 import { differenceInMinutes } from "date-fns";

@@ -1,7 +1,7 @@
 import {Logger} from "@nestjs/common";
 
 import {Command} from "../../../class/Command";
-import {Steam} from "../../../class/Steam";
+import {Steam} from "../../../class/steam/Steam";
 import {CommandProcessor} from "../../../interface/CommandProcessor";
 import {CommandEmitter} from "../../../class/CommandEmitter";
 import {Argument} from "../../../class/Argument";

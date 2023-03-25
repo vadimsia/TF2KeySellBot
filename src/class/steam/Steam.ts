@@ -1,13 +1,14 @@
 import * as SteamUser from "steam-user";
 import * as SteamCommunity from "steamcommunity";
 import * as SteamTradeOfferManager from "steam-tradeoffer-manager"
-import { App } from "../enum/App";
-import { TF2Item } from "../enum/TF2Item";
-import { NoEnoughItemsException } from "../exceptions/Steam";
-import { TradeOffer } from "../interface/TradeOffer";
+import { App } from "../../enum/App";
+import { TF2Item } from "../../enum/TF2Item";
+import { NoEnoughItemsException } from "../../exceptions/Steam";
+import { TradeOffer } from "../../interface/TradeOffer";
 import { Logger } from "@nestjs/common";
-import { Item } from "./Item";
-import { SteamAPIProvider } from "../interface/SteamAPIProvider";
+import { Item } from "../Item";
+import { SteamAPIProvider } from "../../interface/SteamAPIProvider";
+import { PaymentProcessor } from "../../interface/PaymentProcessor";
 
 interface SteamInventory {
     success: number
@@ -28,8 +29,9 @@ export class Steam extends SteamUser {
     manager: SteamTradeOfferManager
     identity_secret: string
     api_provider: SteamAPIProvider
+    payment_provider: PaymentProcessor
 
-    constructor(identity_secret: string, api_provider: SteamAPIProvider) {
+    constructor(identity_secret: string, api_provider: SteamAPIProvider, payment_provider: PaymentProcessor) {
         super();
 
         this.community = new SteamCommunity()
@@ -41,6 +43,7 @@ export class Steam extends SteamUser {
 
         this.identity_secret = identity_secret
         this.api_provider = api_provider
+        this.payment_provider = payment_provider
 
         this.on('webSession', async (sessionid, cookies) => {
             this.community.setCookies(cookies)
@@ -87,13 +90,13 @@ export class Steam extends SteamUser {
         })
     }
 
-    public getSentOffers(cutoff: Date) : Promise<TradeOffer[]> {
-        return new Promise<TradeOffer[]>((resolve, reject) => {
+    public getOffers(cutoff: Date) : Promise<{sent: TradeOffer[], received: TradeOffer[]}> {
+        return new Promise<{sent: TradeOffer[], received: TradeOffer[]}>((resolve, reject) => {
             this.manager.getOffers(EOfferFilter.ActiveOnly, cutoff, (err, sent, received) => {
                 if (err)
                     return reject(err)
 
-                resolve(sent)
+                resolve({ sent, received })
             })
         })
     }
@@ -105,6 +108,14 @@ export class Steam extends SteamUser {
                     return reject(err)
 
                 return resolve()
+            })
+        })
+    }
+
+    public acceptOffer(trade_offer: any) : Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            trade_offer.accept(true, () => {
+                resolve()
             })
         })
     }

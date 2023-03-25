@@ -1,5 +1,5 @@
 import {Command} from "../class/Command";
-import {Steam} from "../class/Steam";
+import {Steam} from "../class/steam/Steam";
 import {Argument} from "../class/Argument";
 
 export interface CommandProcessor {
