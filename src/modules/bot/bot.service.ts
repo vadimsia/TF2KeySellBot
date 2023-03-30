@@ -38,7 +38,7 @@ export class BotService {
 
         this.client.on('loggedOn', async (details) => {
             Logger.debug("Logged in!")
-            // await this.client.updateStocks()
+            await this.client.updateStocks()
         })
 
         this.client.on('newItems', async () => {

@@ -77,7 +77,11 @@ export class BitCart implements PaymentProcessor {
     }
 
     async getWallets(): Promise<Wallet[]> {
-        let wallets: Wallet[] = (await this.client.get('/wallets')).data.result
+        let params = {
+            limit: 100
+        }
+
+        let wallets: Wallet[] = (await this.client.get('/wallets', {params})).data.result
         let result: Wallet[] = []
         let stores = (await this.client.get('/stores')).data.result
         let store = stores.find(store => store.id == this.store_id)
