@@ -24,7 +24,8 @@ describe('BitCart', () => {
 
     it('wallets test', async () => {
         let wallets = await bitcart.getWallets()
-        console.log(wallets)
+        let balance = wallets.map(wallet => wallet.usd_balance).reduce((a, b) => a + b, 0)
+        console.log(balance)
     })
 
     it('validate address', async () => {

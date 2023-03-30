@@ -3,6 +3,8 @@ import { TradeOffer } from "./TradeOffer";
 export interface Wallet {
     id: string
     currency: string
+    name: string
+    hint: string
     balance: number
     rate: number
 
@@ -28,6 +30,7 @@ export interface Payout {
     metadata: {
         trade_id: string
         steamid: string
+        last_status: string
     }
 }
 
@@ -36,6 +39,7 @@ export interface PaymentProcessor {
     getPaidInvoices() : Promise<Invoice[]>
     getPayouts() : Promise<Payout[]>
     completeInvoice(invoice: Invoice) : Promise<boolean>
+    updatePayoutStatus(payout: Payout) : Promise<void>
     createPayout(amount_usd: number, wallet: Wallet, destination: string, offer: TradeOffer) : Promise<Payout>
     getBalance() : Promise<number>
     getWallets() : Promise<Wallet[]>

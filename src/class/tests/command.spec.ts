@@ -10,6 +10,16 @@ describe('Command', () => {
         console.log(command.Args)
     })
 
+    it("fast test", () => {
+        let msg = `
+        Available commands:
+        asdasdas
+        `
+
+
+    })
+
+
     it ("arguments check test", () => {
         let args: Argument[] = [
             new Argument('test', ArgumentType.NUMBER),

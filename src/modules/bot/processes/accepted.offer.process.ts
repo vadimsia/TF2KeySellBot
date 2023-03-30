@@ -21,26 +21,31 @@ export class AcceptedOfferProcess {
         let payout = payouts.find(payout => payout.metadata.trade_id == offer.id)
 
         if (payout) {
+            if (payout.status == payout.metadata.last_status)
+                return
+
             Logger.debug(`${offer.id} Already payed out`)
-            await client.chat.sendFriendMessage(offer.partner, `Payout for offer ${offer.id} with amount ${payout.amount}$ has ${payout.status} status`)
-            await client.chat.sendFriendMessage(offer.partner, `TX ID: ${payout.tx_hash}`)
+
+            await client.quoteMessage(offer.partner.getSteamID64(), `Payout for offer ${offer.id} with amount ${payout.amount}$ has ${payout.status} status`)
+            await client.quoteMessage(offer.partner.getSteamID64(), `TX ID: ${payout.tx_hash}`)
+            await client.payment_provider.updatePayoutStatus(payout)
             return
         }
 
         let [currency, destination] = offer.message.split(':')
         let price = KeyPrice.calcBuyPrice(keys_to_receive.length)
         let wallets = await client.payment_provider.getWallets()
-        let wallet = wallets.find(wallet => wallet.currency.toUpperCase() == currency)
+        let wallet = wallets.find(wallet => wallet.name.toUpperCase() == currency.toUpperCase())
 
         if (!wallet) {
             Logger.error(`Invalid currency ${currency}`)
-            await client.chat.sendFriendMessage(offer.partner, `Currency ${currency} is invalid`)
+            await client.quoteMessage(offer.partner.getSteamID64(), `Currency ${currency} is invalid`)
             return
         }
 
 
         Logger.debug(`Sending ${price} to this gentleman`)
         payout = await client.payment_provider.createPayout(price, wallet, destination, offer)
-        await client.chat.sendFriendMessage(offer.partner, `Payout for offer ${offer.id} with amount ${payout.amount}$ has ${payout.status} status`)
+        await client.quoteMessage(offer.partner.getSteamID64(), `Payout for offer ${offer.id} with amount ${payout.amount}$ has ${payout.status} status`)
     }
 }

@@ -17,16 +17,16 @@ export class HelpCommand implements CommandProcessor {
         let descriptions = emitter.commands.map(command => {
             let args = command.arguments.map(arg => { return `<${arg.name}>` }).join(' ')
             return `
-            /${command.name} ${args} - ${command.description}
-            Example: ${command.example}`
+/${command.name} ${args} - ${command.description}
+Example: ${command.example}`
         })
 
         let msg = `
-        Available commands:
-        ${descriptions.join('\n')}
+Available commands:
+${descriptions.join('\n')}
         `
 
-        await client.chat.sendFriendMessage(steamid, msg)
+        await client.preMessage(steamid, msg)
     }
 
 }

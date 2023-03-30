@@ -1,14 +1,15 @@
 import * as SteamUser from "steam-user";
+import { EPersonaState } from "steam-user";
 import * as SteamCommunity from "steamcommunity";
-import * as SteamTradeOfferManager from "steam-tradeoffer-manager"
+import * as SteamTradeOfferManager from "steam-tradeoffer-manager";
 import { App } from "../../enum/App";
 import { TF2Item } from "../../enum/TF2Item";
 import { NoEnoughItemsException } from "../../exceptions/Steam";
 import { TradeOffer } from "../../interface/TradeOffer";
-import { Logger } from "@nestjs/common";
 import { Item } from "../Item";
 import { SteamAPIProvider } from "../../interface/SteamAPIProvider";
 import { PaymentProcessor } from "../../interface/PaymentProcessor";
+import { KeyPrice } from "./KeyPrice";
 
 interface SteamInventory {
     success: number
@@ -90,6 +91,12 @@ export class Steam extends SteamUser {
         })
     }
 
+    public async updateStocks() : Promise<void> {
+        let keys = await this.getKeys(this.steamID.getSteamID64())
+        this.gamesPlayed(`$${KeyPrice.getBuyPrice()}/$${KeyPrice.getSellPrice()}, ${keys.length}/3000🔑`)
+        this.setPersona(EPersonaState.Online)
+    }
+
     public getOffers(cutoff: Date) : Promise<{sent: TradeOffer[], received: TradeOffer[]}> {
         return new Promise<{sent: TradeOffer[], received: TradeOffer[]}>((resolve, reject) => {
             this.manager.getOffers(EOfferFilter.ActiveOnly, cutoff, (err, sent, received) => {
@@ -138,7 +145,7 @@ export class Steam extends SteamUser {
         trade_offer.setMessage(message)
 
         await this.sendOffer(trade_offer)
-        await this.chat.sendFriendMessage(steamid, 'Trade offer successfully sent!')
+        await this.quoteMessage(steamid, 'Trade offer successfully sent!')
     }
 
     public async sendKeys(steamid: string, amount: number, message: string = '') : Promise<void> {
@@ -152,7 +159,15 @@ export class Steam extends SteamUser {
         trade_offer.setMessage(message)
 
         await this.sendOffer(trade_offer)
-        await this.chat.sendFriendMessage(steamid, 'Trade offer successfully sent, wait while bot confirm!')
+        await this.quoteMessage(steamid, 'Trade offer successfully sent, wait while bot confirm!')
     }
 
+
+    public async quoteMessage(steamid: string, message: string) : Promise<void> {
+        await this.chat.sendFriendMessage(steamid, `/quote ${message}`)
+    }
+
+    public async preMessage(steamid: string, message: string) : Promise<void> {
+        await this.chat.sendFriendMessage(steamid, `/pre ${message}`)
+    }
 }

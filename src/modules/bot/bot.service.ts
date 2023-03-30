@@ -36,15 +36,20 @@ export class BotService {
             twoFactorCode: totp.getAuthCode(Constants.STEAM.SHARED_SECRET)
         })
 
-        this.client.on('loggedOn', (details) => {
+        this.client.on('loggedOn', async (details) => {
             Logger.debug("Logged in!")
+            // await this.client.updateStocks()
         })
+
+        this.client.on('newItems', async () => {
+            await this.client.updateStocks()
+        })
+
         this.client.on('friendRelationship', async (steamid, relationship) => {
             Logger.debug(`New friend relationship ${EFriendRelationship[relationship]} with ${steamid}`)
             if (relationship == EFriendRelationship.RequestRecipient) {
                 let {personaName} = await this.client.addFriend(steamid)
                 Logger.debug(`Accepted ${personaName}#${steamid} request`)
-
             }
         })
 
@@ -53,7 +58,7 @@ export class BotService {
                 let cmd = Command.parseCommand(msg.message)
                 this.emitter.runCommand(cmd, this.client, msg.steamid_friend.toString())
             } catch (e) {
-                await this.client.chat.sendFriendMessage(msg.steamid_friend, `Error ${e} while processing command, use /help`)
+                await this.client.quoteMessage(msg.steamid_friend.getSteamID64(), `Error ${e} while processing command, use /help`)
             }
         })
 
@@ -77,7 +82,7 @@ export class BotService {
             try {
                 await AcceptedOfferProcess.run(offer, this.client)
             } catch (e) {
-                await this.client.chat.sendFriendMessage(offer.partner, `${e} while processing accepted offer`)
+                await this.client.quoteMessage(offer.partner.getSteamID64(), `${e} while processing accepted offer`)
             }
         }
 
@@ -85,7 +90,7 @@ export class BotService {
             try {
                 await ActiveOfferProcess.run(offer, this.client)
             } catch (e) {
-                await this.client.chat.sendFriendMessage(offer.partner, `${e} while processing active offer`)
+                await this.client.quoteMessage(offer.partner.getSteamID64(), `${e} while processing active offer`)
             }
         }
 

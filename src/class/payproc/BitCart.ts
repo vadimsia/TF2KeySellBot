@@ -66,20 +66,34 @@ export class BitCart implements PaymentProcessor {
         return response.metadata.success == true
     }
 
-    async getWallets(): Promise<Wallet[]> {
-        let wallets: Wallet[] = (await this.client.get('/wallets')).data.result
+    async updatePayoutStatus(payout:Payout) : Promise<void> {
+        payout.metadata.last_status = payout.status
 
-        for (let wallet of wallets) {
-            const params = {
-                currency: wallet.currency
-            }
-
-            let result = await this.client.get('/cryptos/rate', {params})
-            wallet.rate = result.data as number
-            wallet.usd_balance = wallet.balance * wallet.rate
+        let data = {
+            metadata: payout.metadata
         }
 
-        return wallets
+        await this.client.patch(`/payouts/${payout.id}`, data)
+    }
+
+    async getWallets(): Promise<Wallet[]> {
+        let wallets: Wallet[] = (await this.client.get('/wallets')).data.result
+        let result: Wallet[] = []
+        let stores = (await this.client.get('/stores')).data.result
+        let store = stores.find(store => store.id == this.store_id)
+
+        for (let wallet of wallets) {
+            if (!store.wallets.includes(wallet.id))
+                continue
+
+            let rate = (await this.client.get(`/wallets/${wallet.id}/rate`)).data as number
+
+            wallet.rate = rate
+            wallet.usd_balance = wallet.balance * wallet.rate
+            result.push(wallet)
+        }
+
+        return result
     }
 
     validateAddress(address: string, currency: string): boolean {

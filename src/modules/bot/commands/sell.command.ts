@@ -15,36 +15,36 @@ export class SellCommand implements CommandProcessor {
     public example = '/sell 50 ETH 0xae838eea358aeafa265b72f62bd11aa1296bae95db5d24d74f2cce9ff158bf86'
 
     public async process(cmd: Command, client: Steam, steamid: string) {
-        await client.chat.sendFriendMessage(steamid, `Creating offer, wait a bit...`)
+        await client.quoteMessage(steamid, `Offer is being processed, hold on..`)
 
         let amount = parseInt(cmd.Args[0])
-        let currency = cmd.Args[1]
+        let currency = cmd.Args[1].toUpperCase()
         let wallet = cmd.Args[2]
 
         let message = `${currency}:${wallet}`
 
-        if (!client.payment_provider.validateAddress(wallet, currency)) {
-            await client.chat.sendFriendMessage(steamid, `Input address is invalid`)
+        let wallets = await client.payment_provider.getWallets()
+        let wall = wallets.find(wall => wall.name.toUpperCase() == currency)
+
+        if (!wall) {
+            await client.quoteMessage(steamid, `${currency} is currently not supported, please use /stocks to see the supported cryptocurrencies`)
             return
         }
 
-        let wallets = await client.payment_provider.getWallets()
-        let wall = wallets.find(wall => wall.currency.toUpperCase() == currency)
-
-        if (!wall) {
-            await client.chat.sendFriendMessage(steamid, `${currency} currency does not supported, use /stocks to see available`)
+        if (!client.payment_provider.validateAddress(wallet, wall.currency)) {
+            await client.quoteMessage(steamid, `Input address is invalid`)
             return
         }
 
         if (wall.usd_balance < KeyPrice.calcBuyPrice(amount)) {
-            await client.chat.sendFriendMessage(steamid, `We have no enough balance on this wallet to buy ${amount} keys, use /stocks`)
+            await client.quoteMessage(steamid, `We have no enough balance on this wallet to buy ${amount} keys, use /stocks`)
             return
         }
 
         try {
             await client.retreiveKeys(steamid, amount, message)
         } catch (e) {
-            await client.chat.sendFriendMessage(steamid, `${e} while running sell command`)
+            await client.quoteMessage(steamid, `${e} while running sell command`)
         }
 
     }

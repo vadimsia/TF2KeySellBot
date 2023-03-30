@@ -15,11 +15,11 @@ export class ActiveOfferProcess {
         if (difference >= 10) {
             Logger.debug(`Cancelling offer`)
             await client.cancelOffer(offer)
-            await client.chat.sendFriendMessage(offer.partner, `Cancelling offer`)
+            await client.quoteMessage(offer.partner.getSteamID64(), `Cancelling offer`)
             return
         }
 
         Logger.debug(`Difference in minutes: ${difference}`)
-        await client.chat.sendFriendMessage(offer.partner, `Offer will be cancelled in ${10 - difference} minutes!`)
+        await client.quoteMessage(offer.partner.getSteamID64(), `Offer will be cancelled in ${10 - difference} minutes!`)
     }
 }

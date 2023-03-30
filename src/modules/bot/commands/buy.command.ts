@@ -15,7 +15,7 @@ export class BuyCommand implements CommandProcessor {
     public example = '/buy 50'
 
     public async process(cmd: Command, client: Steam, steamid: string) {
-        await client.chat.sendFriendMessage(steamid, `Creating invoice, wait a bit...`)
+        await client.quoteMessage(steamid, `Creating invoice, wait a bit...`)
 
         let amount = parseInt(cmd.Args[0])
 
@@ -27,9 +27,9 @@ export class BuyCommand implements CommandProcessor {
 
             let price = KeyPrice.calcSellPrice(amount)
             let invoice = await client.payment_provider.createInvoice(price, steamid, amount)
-            await client.chat.sendFriendMessage(steamid, `Here is your invoice: ${Constants.BITCART.PAYMENT_HOST}?invoice=${invoice.id}`)
+            await client.quoteMessage(steamid, `Here is your invoice: ${Constants.BITCART.PAYMENT_HOST}?invoice=${invoice.id}`)
         } catch (e) {
-            await client.chat.sendFriendMessage(steamid, `${e} while running buy command`)
+            await client.quoteMessage(steamid, `${e} while running buy command`)
         }
 
     }
