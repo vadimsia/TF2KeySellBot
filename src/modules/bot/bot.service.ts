@@ -41,10 +41,6 @@ export class BotService {
             await this.client.updateStocks()
         })
 
-        this.client.on('newItems', async () => {
-            await this.client.updateStocks()
-        })
-
         this.client.on('friendRelationship', async (steamid, relationship) => {
             Logger.debug(`New friend relationship ${EFriendRelationship[relationship]} with ${steamid}`)
             if (relationship == EFriendRelationship.RequestRecipient) {
@@ -77,6 +73,12 @@ export class BotService {
 
         let accepted = sent.filter(offer => offer.state == ETradeOfferState.Accepted)
         let active = sent.filter(offer => offer.state == ETradeOfferState.Active)
+
+        let pending_invoices = await this.client.payment_provider.getPendingInvoices()
+
+        if (active.length > 0 || pending_invoices.length > 0) await this.client.makeBusy()
+        else await this.client.releaseBusy()
+
 
         for (let offer of accepted) {
             try {

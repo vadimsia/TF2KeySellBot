@@ -37,11 +37,13 @@ export interface Payout {
 export interface PaymentProcessor {
     createInvoice(amount: number, steamid: string, item_amount: number) : Promise<Invoice>
     getPaidInvoices() : Promise<Invoice[]>
+    getPendingInvoices() : Promise<Invoice[]>
     getPayouts() : Promise<Payout[]>
     completeInvoice(invoice: Invoice) : Promise<boolean>
     updatePayoutStatus(payout: Payout) : Promise<void>
     createPayout(amount_usd: number, wallet: Wallet, destination: string, offer: TradeOffer) : Promise<Payout>
     getBalance() : Promise<number>
+    getFee(wallet: Wallet) : number
     getWallets() : Promise<Wallet[]>
     validateAddress(address: string, currency: string) : boolean
 }

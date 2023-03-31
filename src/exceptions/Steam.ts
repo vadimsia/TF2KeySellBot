@@ -12,3 +12,10 @@ export class NoEnoughItemsException extends Error{
     }
 }
 
+export class BotBusyException extends Error{
+    constructor() {
+        super();
+        this.name = 'BotBusyException'
+    }
+}
+

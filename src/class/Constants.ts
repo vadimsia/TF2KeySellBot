@@ -1,3 +1,4 @@
+import * as process from "process";
 
 export class Constants {
     public static STEAM_APIS = {
@@ -19,4 +20,5 @@ export class Constants {
     }
 
     public static ADMINS = process.env.ADMINS || '76561198193808842'
+    public static TRADE_CANCEL_TIME = parseInt(process.env.TRADE_CANCEL_TIME) || 30
 }

@@ -4,20 +4,12 @@ import * as SteamCommunity from "steamcommunity";
 import * as SteamTradeOfferManager from "steam-tradeoffer-manager";
 import { App } from "../../enum/App";
 import { TF2Item } from "../../enum/TF2Item";
-import { NoEnoughItemsException } from "../../exceptions/Steam";
+import { BotBusyException, NoEnoughItemsException } from "../../exceptions/Steam";
 import { TradeOffer } from "../../interface/TradeOffer";
 import { Item } from "../Item";
 import { SteamAPIProvider } from "../../interface/SteamAPIProvider";
 import { PaymentProcessor } from "../../interface/PaymentProcessor";
 import { KeyPrice } from "./KeyPrice";
-
-interface SteamInventory {
-    success: number
-    assets: {
-        classid: string
-        assetid: string
-    }[]
-}
 
 enum EOfferFilter {
     ActiveOnly = 1,
@@ -25,15 +17,19 @@ enum EOfferFilter {
     All = 3
 }
 
+
 export class Steam extends SteamUser {
     community: SteamCommunity
     manager: SteamTradeOfferManager
     identity_secret: string
     api_provider: SteamAPIProvider
     payment_provider: PaymentProcessor
+    busy: boolean
 
     constructor(identity_secret: string, api_provider: SteamAPIProvider, payment_provider: PaymentProcessor) {
         super();
+
+        this.busy = false
 
         this.community = new SteamCommunity()
         this.manager = new SteamTradeOfferManager({
@@ -89,6 +85,25 @@ export class Steam extends SteamUser {
                 resolve(key)
             })
         })
+    }
+
+
+    public async checkBusy(steamid: string) {
+        if (this.busy) {
+            await this.quoteMessage(steamid, `The bot is being used by another person, please wait ~10 minutes and try again`)
+        }
+
+        return this.busy
+    }
+    public async makeBusy() {
+        this.busy = true
+        this.setPersona(EPersonaState.Busy)
+        this.gamesPlayed([])
+    }
+
+    public async releaseBusy() {
+        this.busy = false
+        await this.updateStocks()
     }
 
     public async updateStocks() : Promise<void> {

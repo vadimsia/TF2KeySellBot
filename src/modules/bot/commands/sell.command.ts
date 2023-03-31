@@ -15,6 +15,9 @@ export class SellCommand implements CommandProcessor {
     public example = '/sell 50 ETH 0xae838eea358aeafa265b72f62bd11aa1296bae95db5d24d74f2cce9ff158bf86'
 
     public async process(cmd: Command, client: Steam, steamid: string) {
+        if (await client.checkBusy(steamid))
+            return
+
         await client.quoteMessage(steamid, `Offer is being processed, hold on..`)
 
         let amount = parseInt(cmd.Args[0])
@@ -42,6 +45,7 @@ export class SellCommand implements CommandProcessor {
         }
 
         try {
+            await client.makeBusy()
             await client.retreiveKeys(steamid, amount, message)
         } catch (e) {
             await client.quoteMessage(steamid, `${e} while running sell command`)

@@ -33,9 +33,9 @@ export class AcceptedOfferProcess {
         }
 
         let [currency, destination] = offer.message.split(':')
-        let price = KeyPrice.calcBuyPrice(keys_to_receive.length)
         let wallets = await client.payment_provider.getWallets()
         let wallet = wallets.find(wallet => wallet.name.toUpperCase() == currency.toUpperCase())
+        let price = KeyPrice.calcBuyPrice(keys_to_receive.length) - client.payment_provider.getFee(wallet)
 
         if (!wallet) {
             Logger.error(`Invalid currency ${currency}`)

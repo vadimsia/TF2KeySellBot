@@ -15,11 +15,15 @@ export class BuyCommand implements CommandProcessor {
     public example = '/buy 50'
 
     public async process(cmd: Command, client: Steam, steamid: string) {
+        if (await client.checkBusy(steamid))
+            return
+
         await client.quoteMessage(steamid, `Creating invoice, wait a bit...`)
 
         let amount = parseInt(cmd.Args[0])
 
         try {
+            await client.makeBusy()
             let keys = await client.getKeys(client.steamID.getSteamID64())
 
             if (keys.length < amount)

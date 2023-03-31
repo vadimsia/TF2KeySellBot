@@ -11,11 +11,24 @@ describe('Command', () => {
     })
 
     it("fast test", () => {
-        let msg = `
-        Available commands:
-        asdasdas
-        `
+        function enumerable() {
+            return function (target: Test, propertyKey: string, descriptor: PropertyDescriptor) {
+                console.log(target)
+                console.log(propertyKey)
+                console.log(descriptor.value)
+                console.log(target.prop)
+            };
+        }
 
+        class Test {
+            prop: number
+            @enumerable()
+            meth(prop, prop2) {
+                return 1
+            }
+        }
+
+        new Test().meth(1,2)
 
     })
 

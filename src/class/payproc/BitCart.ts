@@ -55,6 +55,17 @@ export class BitCart implements PaymentProcessor {
         return invoices.filter(invoice => invoice.metadata.success == false)
     }
 
+    async getPendingInvoices() : Promise<Invoice[]> {
+        let params = {
+            limit: 10,
+            query: 'pending'
+        }
+
+        let invoices: Invoice[] = (await this.client.get('/invoices', {params})).data.result
+
+        return invoices.filter(invoice => invoice.metadata.success == false)
+    }
+
     async completeInvoice(invoice: Invoice) : Promise<boolean> {
         invoice.metadata.success = true
 
@@ -74,6 +85,18 @@ export class BitCart implements PaymentProcessor {
         }
 
         await this.client.patch(`/payouts/${payout.id}`, data)
+    }
+
+    getFee(wallet: Wallet) : number {
+        let res = wallet.hint.match(/\$\d+.\d/)
+        if (!res)
+            return 0
+
+        res = res[0].match(/\d+.\d/)
+        if (!res)
+            return 0
+
+        return parseFloat(res[0])
     }
 
     async getWallets(): Promise<Wallet[]> {

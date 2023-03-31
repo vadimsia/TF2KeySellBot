@@ -11,6 +11,7 @@ describe('BitCart', () => {
     it ('get invoices test', async () => {
         let invoices = await bitcart.getPaidInvoices()
         console.log(invoices)
+        console.log(await bitcart.getPendingInvoices())
     })
 
     it('get payouts test', async () => {
@@ -25,7 +26,10 @@ describe('BitCart', () => {
     it('wallets test', async () => {
         let wallets = await bitcart.getWallets()
         let balance = wallets.map(wallet => wallet.usd_balance).reduce((a, b) => a + b, 0)
-        console.log(balance)
+        for (let wallet of wallets) {
+            console.log(wallet.name, wallet.usd_balance, bitcart.getFee(wallet))
+        }
+
     })
 
     it('validate address', async () => {
