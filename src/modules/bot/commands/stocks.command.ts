@@ -27,7 +27,7 @@ export class StocksCommand implements CommandProcessor {
 
         let formatted = wallets.map(wallet => {
             let can_buy = Math.floor(wallet.usd_balance / key_buy_price)
-            return `${wallet.name} (${wallet.hint}) - ${wallet.balance} (${(wallet.usd_balance).toFixed(2)}💲, can buy ${can_buy} 🔑)`
+            return `${wallet.name} (${wallet.hint}) - ${wallet.balance} (${(wallet.usd_balance).toFixed(2)}💲, bot can afford ${can_buy} 🔑)`
         })
 
 
