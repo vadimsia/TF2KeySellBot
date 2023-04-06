@@ -38,8 +38,8 @@ export class KeyPrice {
     }
 
     constructor() {
-        this.sell_price = parseInt(process.env.SELL_PRICE) || 1.90
-        this.buy_price = parseInt(process.env.BUY_PRICE) || 1.75
+        this.sell_price = parseFloat(process.env.SELL_PRICE) || 1.90
+        this.buy_price = parseFloat(process.env.BUY_PRICE) || 1.75
     }
 
 }

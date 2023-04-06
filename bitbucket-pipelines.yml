@@ -15,6 +15,9 @@ pipelines:
             - docker
           artifacts:
             - "*.tar"
+          runs-on:
+            - self.hosted
+            - linux
       - step:
           name: Deploy to Production
           deployment: Production
@@ -27,3 +30,6 @@ pipelines:
             - docker push "${IMAGE}:latest"
           services:
             - docker
+          runs-on:
+            - self.hosted
+            - linux
