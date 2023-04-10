@@ -115,4 +115,9 @@ export class BotService {
             else Logger.error(`ERROR WHILE COMPLETING #${invoice.id} invoice!!`)
         }
     }
+
+    @Cron('0 */2 * * *')
+    async relogin() {
+        this.client.relog()
+    }
 }
