@@ -107,9 +107,13 @@ export class Steam extends SteamUser {
     }
 
     public async updateStocks() : Promise<void> {
-        let keys = await this.getKeys(this.steamID.getSteamID64())
-        this.gamesPlayed(`$${KeyPrice.getBuyPrice()}/$${KeyPrice.getSellPrice()}, ${keys.length}/3000🔑`)
-        this.setPersona(EPersonaState.Online)
+        try {
+            let keys = await this.getKeys(this.steamID.getSteamID64())
+            this.gamesPlayed(`$${KeyPrice.getBuyPrice()}/$${KeyPrice.getSellPrice()}, ${keys.length}/3000🔑`)
+            this.setPersona(EPersonaState.Online)
+        } catch (e) {
+            console.trace(e)
+        }
     }
 
     public getOffers(cutoff: Date) : Promise<{sent: TradeOffer[], received: TradeOffer[]}> {
