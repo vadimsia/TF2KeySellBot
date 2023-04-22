@@ -38,6 +38,7 @@
     "coinbase-commerce-node": "^1.0.4",
     "coinremitter-api": "^1.1.0",
     "date-fns": "^2.29.3",
+    "multicoin-address-validator": "^0.5.12",
     "reflect-metadata": "^0.1.13",
     "request": "^2.88.2",
     "request-promise": "^4.2.6",

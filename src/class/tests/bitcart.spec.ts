@@ -33,6 +33,6 @@ describe('BitCart', () => {
     })
 
     it('validate address', async () => {
-        console.log(bitcart.validateAddress('TL6QqKZGoS1LkEAhL2mgYHmFBZKY7dubRA', 'TRX'))
+        console.log(bitcart.validateAddress('0x2e7633e9ee692726d7ce7f813508b7878c228a51', 'MATIC'))
     })
 })

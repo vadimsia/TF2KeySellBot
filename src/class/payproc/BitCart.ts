@@ -3,8 +3,7 @@ import axios, {AxiosInstance} from 'axios'
 import { TradeOffer } from "../../interface/TradeOffer";
 import { Constants } from "../Constants";
 import { SendPayoutException } from "../../exceptions/Payment";
-import * as Validator from "@swyftx/api-crypto-address-validator"
-
+import * as Validator from "multicoin-address-validator"
 
 export interface BitCartInvoiceOptions {
     redirect_url?: string
