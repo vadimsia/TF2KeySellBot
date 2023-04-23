@@ -23,7 +23,7 @@ export class SteamApis implements SteamAPIProvider {
         try {
             response = await axios.get(`https://api.steamapis.com/steam/inventory/${steamid}/${app}/2`, { params })
         } catch (e) {
-            throw new Error('Error while loading inventory, try again')
+            throw new Error('Error while loading inventory, make sure its public and try again')
         }
 
         if (response.data.success != 1)
